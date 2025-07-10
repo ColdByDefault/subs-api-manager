@@ -1,0 +1,122 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAUSED
+  EXPIRED
+  TRIAL
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PlanType {
+  MONTHLY
+  YEARLY
+  LIFETIME
+  TRIAL
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+  payments      Payment[]
+
+  @@index([email])
+}
+
+model Subscription {
+  id              Int                @id @default(autoincrement())
+  userId          Int
+  planId          Int
+  status          SubscriptionStatus
+  startDate       DateTime           @default(now())
+  endDate         DateTime?
+  nextBillingDate DateTime?
+  cancelledAt     DateTime?
+  trialEndsAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  user            User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan            Plan               @relation(fields: [planId], references: [id])
+  payments        Payment[]
+
+  @@unique([userId, planId], name: "user_plan_unique")
+  @@index([userId])
+  @@index([status])
+  @@index([nextBillingDate])
+}
+
+
+model Payment {
+  id              Int           @id @default(autoincrement())
+  userId          Int
+  subscriptionId  Int?
+  amount          Float
+  currency        String        @default("USD")
+  status          PaymentStatus
+  paymentMethod   String?
+  transactionId   String?       @unique
+  paymentDate     DateTime      @default(now())
+  failureReason   String?
+  refundedAmount  Float?        @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription    Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([subscriptionId])
+  @@index([status])
+  @@index([paymentDate])
+}
+
+model Plan {
+  id              Int           @id @default(autoincrement())
+  name            String        @unique
+  description     String
+  price           Float
+  currency        String        @default("USD")
+  type            PlanType
+  billingInterval Int           // in days (30 for monthly, 365 for yearly)
+  trialDays       Int?          @default(0)
+  features        String[]      // JSON array of features
+  isActive        Boolean       @default(true)
+  maxUsers        Int?          // for team plans
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  subscriptions   Subscription[]
+
+  @@index([type])
+  @@index([isActive])
+  @@index([price])
+}
+
+

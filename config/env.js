@@ -1,5 +1,19 @@
 import { config } from "dotenv";
 
-config({ path: `.env.${process.env.NODE_ENV || "dev"}.local` });
+// Load the base .env file first
+config({ path: ".env" });
 
-export const {PORT, NODE_ENV} = process.env;
+// Then load environment-specific file if NODE_ENV is set
+if (process.env.NODE_ENV === "production") {
+  config({ path: ".env.prod.local" });
+}
+
+export const {
+  PORT,
+  NODE_ENV,
+  DB_HOST,
+  DB_PORT,
+  DB_USER,
+  DB_PASSWORD,
+  DB_NAME,
+} = process.env;

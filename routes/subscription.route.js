@@ -32,4 +32,22 @@ SubscriptionRouter.delete('/:id', (req, res) => {
     });
 });
 
+SubscriptionRouter.get('/user/:id', (req, res) => {
+    res.send({
+        title: 'Get one User Subscription'
+    });
+});
+
+SubscriptionRouter.put('/:id/cancel', (req, res) => {
+    res.send({
+        title: 'Cancel one User Subscription'
+    });
+});
+
+SubscriptionRouter.get('/upcoming-renewals', (req, res) => {
+    res.send({
+        title: 'Get all Upcoming Subscriptions'
+    });
+});
+
 export default SubscriptionRouter;
