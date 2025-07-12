@@ -5,12 +5,16 @@ import { connectDatabase } from "./db/database.js";
 import subscriptionRouter from "./routes/subscription.route.js";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import errorMiddleware from "./middelwares/error.middelware.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 // Middleware
+app.use(errorMiddleware);
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Subscription API Management!");
