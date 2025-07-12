@@ -1,12 +1,10 @@
 import { Router } from "express";
+import { getUsers, getUser } from '../controllers/user.controller.js';
 
 const userRouter = Router();
 
-userRouter.get('/', (req, res) => {
-    res.send({
-        title: 'Fetch all Users'
-    });
-});
+userRouter.get('/', getUsers);
+userRouter.get('/:id', getUser);
 
 userRouter.post('/', (req, res) => {
     res.send({
@@ -14,11 +12,6 @@ userRouter.post('/', (req, res) => {
     });
 });
 
-userRouter.get('/:id', (req, res) => {
-    res.send({
-        title: 'Fetch one User'
-    });
-});
 
 userRouter.post('/:id', (req, res) => {
     res.send({
