@@ -57,25 +57,6 @@ CREATE TABLE "Payment" (
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "Plan" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
-    "currency" TEXT NOT NULL DEFAULT 'USD',
-    "type" "PlanType" NOT NULL,
-    "billingInterval" INTEGER NOT NULL,
-    "trialDays" INTEGER DEFAULT 0,
-    "features" TEXT[],
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "maxUsers" INTEGER,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Plan_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -109,23 +90,8 @@ CREATE INDEX "Payment_status_idx" ON "Payment"("status");
 -- CreateIndex
 CREATE INDEX "Payment_paymentDate_idx" ON "Payment"("paymentDate");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Plan_name_key" ON "Plan"("name");
-
--- CreateIndex
-CREATE INDEX "Plan_type_idx" ON "Plan"("type");
-
--- CreateIndex
-CREATE INDEX "Plan_isActive_idx" ON "Plan"("isActive");
-
--- CreateIndex
-CREATE INDEX "Plan_price_idx" ON "Plan"("price");
-
 -- AddForeignKey
 ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_planId_fkey" FOREIGN KEY ("planId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Payment" ADD CONSTRAINT "Payment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
