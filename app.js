@@ -1,12 +1,13 @@
 import express from "express";
 import { PORT } from "./config/env.js";
 import { connectDatabase } from "./db/database.js";
-// Importing routes
 import subscriptionRouter from "./routes/subscription.route.js";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import errorMiddleware from "./middelwares/error.middelware.js";
 import cookieParser from "cookie-parser";
+import arcjetMiddleware from "./middelwares/arcjet.middleware.js";
+
 
 const app = express();
 
@@ -14,6 +15,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(arcjetMiddleware);
+
 
 app.get("/", (req, res) => {
   res.send("Subscription API Management!");
